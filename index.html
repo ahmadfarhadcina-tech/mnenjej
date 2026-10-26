@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>نسخه‌یار | مدیریت نسخه طبی</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">✚</div><div><strong>نسخه‌یار</strong><small>سیستم نسخه‌نویسی کلینیک</small></div></div>
+    <div class="top-actions"><span id="todayLabel"></span><button class="btn btn-light" id="exportBtn">پشتیبان‌گیری</button><label class="btn btn-light file-label">بازیابی<input id="importFile" type="file" accept="application/json,.json" hidden></label></div>
+  </header>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="clinic-mini"><div class="clinic-avatar">✚</div><div><b id="sideClinicName">کلینیک من</b><small>مدیریت طبی</small></div></div>
+      <nav>
+        <button class="nav-item active" data-page="dashboard"><span>▦</span> داشبورد</button>
+        <button class="nav-item" data-page="patients"><span>♙</span> مریضان</button>
+        <button class="nav-item" data-page="prescriptions"><span>▤</span> نسخه‌ها</button>
+        <button class="nav-item" data-page="newPrescription"><span>＋</span> نسخه جدید</button>
+        <button class="nav-item" data-page="settings"><span>⚙</span> تنظیمات کلینیک</button>
+      </nav>
+      <div class="sidebar-note"><b>یادآوری طبی</b><p>نسخه و مقدار مصرف را پیش از چاپ، داکتر باید بررسی و تأیید کند.</p></div>
+      <small class="side-foot">ذخیره‌سازی محلی روی همین دستگاه</small>
+    </aside>
+    <main class="main-content">
+      <section class="page active" id="page-dashboard">
+        <div class="page-heading"><div><p class="eyebrow">خلاصه فعالیت</p><h1>داشبورد</h1><p class="muted">مدیریت مریضان و نسخه‌های کلینیک</p></div><button class="btn btn-primary" data-go="newPrescription">＋ ساخت نسخه جدید</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-icon teal">♙</span><div><small>مجموع مریضان</small><strong id="statPatients">۰</strong><small class="muted">ثبت‌شده در این دستگاه</small></div></article>
+          <article class="stat-card"><span class="stat-icon blue">▤</span><div><small>مجموع نسخه‌ها</small><strong id="statPrescriptions">۰</strong><small class="muted">تمام نسخه‌های ذخیره‌شده</small></div></article>
+          <article class="stat-card"><span class="stat-icon amber">◷</span><div><small>نسخه‌های امروز</small><strong id="statToday">۰</strong><small class="muted">بر اساس تاریخ ثبت</small></div></article>
+        </div>
+        <div class="panel"><div class="panel-heading"><div><h2>آخرین نسخه‌ها</h2><p class="muted">برای مشاهده جزئیات، نسخه را انتخاب کنید.</p></div><button class="text-btn" data-go="prescriptions">مشاهده همه</button></div><div id="recentPrescriptions"></div></div>
+        <div class="notice"><span>ⓘ</span><div><b>حریم خصوصی و ذخیره‌سازی</b><p>اطلاعات در مرورگر همین دستگاه ذخیره می‌شود و خودکار به دستگاه دیگر انتقال نمی‌یابد. برای جلوگیری از ازدست‌رفتن اطلاعات، مرتب پشتیبان بگیرید. این نسخه اولیه رمزگذاری حرفه‌ای ندارد؛ از دستگاه مشترک برای اطلاعات حساس استفاده نکنید.</p></div></div>
+      </section>
+
+      <section class="page" id="page-patients">
+        <div class="page-heading"><div><p class="eyebrow">پرونده‌ها</p><h1>مریضان</h1><p class="muted">ثبت و جست‌وجوی پرونده‌های مریضان</p></div><button class="btn btn-primary" id="addPatientBtn">＋ ثبت مریض</button></div>
+        <div class="panel"><div class="toolbar"><input id="patientSearch" placeholder="جست‌وجو بر اساس نام، شماره تماس یا شناسه…"><span id="patientCount" class="muted"></span></div><div id="patientsTable"></div></div>
+      </section>
+
+      <section class="page" id="page-prescriptions">
+        <div class="page-heading"><div><p class="eyebrow">آرشیف طبی</p><h1>نسخه‌ها</h1><p class="muted">نسخه‌های ثبت‌شده و تاریخچه مریضان</p></div><button class="btn btn-primary" data-go="newPrescription">＋ نسخه جدید</button></div>
+        <div class="panel"><div class="toolbar"><input id="prescriptionSearch" placeholder="جست‌وجوی شماره نسخه، نام مریض یا داکتر…"><select id="prescriptionFilter"><option value="all">همه نسخه‌ها</option><option value="today">امروز</option></select></div><div id="prescriptionsTable"></div></div>
+      </section>
+
+      <section class="page" id="page-newPrescription">
+        <div class="page-heading"><div><p class="eyebrow">فرم طبی</p><h1 id="prescriptionFormTitle">نسخه جدید</h1><p class="muted">تمام معلومات را بررسی کنید؛ ثبت نسخه به معنی تأیید طبی خودکار نیست.</p></div><button class="btn btn-light" data-go="prescriptions">بازگشت به نسخه‌ها</button></div>
+        <form id="prescriptionForm">
+          <input type="hidden" id="editingPrescriptionId">
+          <div class="panel">
+            <div class="section-title"><span class="step">۱</span><div><h2>معلومات مریض</h2><p class="muted">مریض موجود را انتخاب کنید یا مشخصات جدید را وارد نمایید.</p></div></div>
+            <div class="form-grid">
+              <label class="field wide">انتخاب مریض ثبت‌شده<select id="patientSelect"><option value="">— انتخاب مریض (اختیاری) —</option></select></label>
+              <label class="field">نام کامل مریض <input id="patientName" required maxlength="120" placeholder="نام و تخلص"></label>
+              <label class="field">سن <input id="patientAge" maxlength="30" placeholder="مثلاً ۳۵ سال"></label>
+              <label class="field">جنسیت <select id="patientGender"><option value="">انتخاب کنید</option><option>مرد</option><option>زن</option><option>دیگر</option></select></label>
+              <label class="field">شماره تماس <input id="patientPhone" maxlength="30" placeholder="شماره تماس (اختیاری)"></label>
+              <label class="field wide">حساسیت‌های شناخته‌شده <input id="allergies" maxlength="300" placeholder="اگر معلوم نیست، «نامعلوم» بنویسید؛ در غیر آن خالی بگذارید"></label>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="section-title"><span class="step">۲</span><div><h2>معلومات مراجعه</h2><p class="muted">تشخیص و یادداشت‌ها را توسط داکتر وارد کنید.</p></div></div>
+            <div class="form-grid">
+              <label class="field">تاریخ نسخه <input type="date" id="prescriptionDate" required></label>
+              <label class="field">نام داکتر <input id="doctorName" maxlength="120" required placeholder="نام داکتر"></label>
+              <label class="field">تخصص / شماره جواز <input id="doctorInfo" maxlength="160" placeholder="اختیاری"></label>
+              <label class="field">شماره نسخه <input id="prescriptionNumber" readonly></label>
+              <label class="field wide">تشخیص داکتر <textarea id="diagnosis" rows="2" maxlength="1000" placeholder="تشخیص تأییدشده توسط داکتر"></textarea></label>
+              <label class="field wide">یادداشت / شکایت مریض <textarea id="clinicalNotes" rows="2" maxlength="1500" placeholder="یادداشت بالینی"></textarea></label>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="section-title"><span class="step">۳</span><div><h2>ادویه و طریقه مصرف</h2><p class="muted">اطلاعات هر دوا باید توسط داکتر تأیید شود؛ سیستم مقدار مصرف تجویز نمی‌کند.</p></div></div>
+            <div id="medicationsList"></div>
+            <button type="button" class="btn btn-outline" id="addMedicationBtn">＋ افزودن دوا</button>
+            <label class="field top-gap">دستورهای عمومی برای مریض <textarea id="generalInstructions" rows="2" maxlength="1200" placeholder="فقط دستورهای تأییدشده توسط داکتر"></textarea></label>
+            <label class="check-row"><input type="checkbox" id="doctorConfirmed" required><span>تأیید می‌کنم که معلومات مریض، تشخیص و تمام جزئیات دواها را خودم بررسی کرده‌ام و این نسخه را برای چاپ تأیید می‌کنم.</span></label>
+          </div>
+          <div class="form-actions"><button type="button" class="btn btn-light" data-go="prescriptions">لغو</button><button type="submit" class="btn btn-primary">ذخیره نسخه</button></div>
+        </form>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="page-heading"><div><p class="eyebrow">شخصی‌سازی</p><h1>تنظیمات کلینیک</h1><p class="muted">این مشخصات در نسخه چاپی نمایش داده می‌شود.</p></div></div>
+        <form id="settingsForm" class="panel">
+          <div class="form-grid">
+            <label class="field">نام کلینیک <input id="clinicName" maxlength="160" placeholder="نام کلینیک"></label>
+            <label class="field">شماره تماس کلینیک <input id="clinicPhone" maxlength="50" placeholder="شماره تماس"></label>
+            <label class="field wide">آدرس کلینیک <input id="clinicAddress" maxlength="250" placeholder="آدرس"></label>
+            <label class="field wide">متن پایین نسخه <textarea id="clinicFooter" rows="2" maxlength="400" placeholder="مثلاً: در صورت بروز واکنش غیرعادی، با کلینیک تماس بگیرید."></textarea></label>
+          </div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit">ذخیره تنظیمات</button></div>
+        </form>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="patientDialog" class="dialog">
+    <form id="patientForm" method="dialog">
+      <div class="dialog-head"><h2>ثبت مریض جدید</h2><button type="button" class="icon-btn" id="closePatientDialog">×</button></div>
+      <div class="form-grid">
+        <label class="field wide">نام کامل <input id="newPatientName" required maxlength="120"></label>
+        <label class="field">سن <input id="newPatientAge" maxlength="30"></label>
+        <label class="field">جنسیت <select id="newPatientGender"><option value="">انتخاب کنید</option><option>مرد</option><option>زن</option><option>دیگر</option></select></label>
+        <label class="field wide">شماره تماس <input id="newPatientPhone" maxlength="30"></label>
+      </div>
+      <div class="form-actions"><button type="button" class="btn btn-light" id="cancelPatient">لغو</button><button type="submit" class="btn btn-primary">ذخیره مریض</button></div>
+    </form>
+  </dialog>
+  <dialog id="detailDialog" class="dialog detail-dialog"><div id="detailContent"></div></dialog>
+  <script src="js/app.js"></script>
+</body>
+</html>
